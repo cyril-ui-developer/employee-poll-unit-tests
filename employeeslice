@@ -1,0 +1,99 @@
+
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import axios from 'axios'
+
+import { EmployeeProps, EmployeeField } from '@api/types'
+import {
+  fetchAllEmployees,
+  fetchEmployee,
+  editSingleEmployeeField,
+  createEmployee,
+} from '@store/employeesSlice/employees.thunks'
+
+type EmployeesState = {
+  employees: EmployeeProps[]
+  employee: EmployeeProps
+  fetchStatus: {
+    employees: boolean
+    employee: boolean
+    editSingleEmployeeField: boolean
+    createEmployee: boolean
+  }
+  error: unknown
+}
+
+const initialState: EmployeesState = {
+  employees: [],
+  employee: {
+    id: '',
+    userId: 0,
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    avatarUrl: '',
+    email: '',
+    tel: '',
+    jobTitle: '',
+    hireDate: '',
+    project: '',
+  },
+  fetchStatus: {
+    employees: false,
+    employee: false,
+    editSingleEmployeeField: false,
+    createEmployee: false,
+  },
+  error: null,
+}
+// TODO: use default export and access reducer property
+export const employeesSlice = createSlice({
+  name: 'employees',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchAllEmployees.pending, (state, action) => {
+      state.fetchStatus.employees = true
+    })
+    builder.addCase(fetchAllEmployees.fulfilled, (state, action) => {
+      state.employees = action.payload
+      state.fetchStatus.employees = false
+    })
+    builder.addCase(fetchAllEmployees.rejected, (state, action) => {
+      state.fetchStatus.employees = false
+      state.error = action.payload
+    })
+    builder.addCase(fetchEmployee.pending, (state, action) => {
+      state.fetchStatus.employee = true
+    })
+    builder.addCase(fetchEmployee.fulfilled, (state, action) => {
+      state.employee = action.payload
+      state.fetchStatus.createEmployee = false
+    })
+    builder.addCase(fetchEmployee.rejected, (state, action) => {
+      state.fetchStatus.employee = false
+      state.error = action.payload
+    })
+    builder.addCase(editSingleEmployeeField.pending, (state, action) => {
+      state.fetchStatus.editSingleEmployeeField = true
+    })
+    builder.addCase(editSingleEmployeeField.fulfilled, (state, action) => {
+      state.employee = action.payload
+      state.fetchStatus.editSingleEmployeeField = false
+    })
+    builder.addCase(editSingleEmployeeField.rejected, (state, action) => {
+      state.fetchStatus.editSingleEmployeeField = false
+      state.error = action.payload
+    })
+    builder.addCase(createEmployee.pending, (state, action) => {
+      state.fetchStatus.createEmployee = true
+    })
+    builder.addCase(createEmployee.fulfilled, (state, action) => {
+      state.employee = action.payload
+      state.fetchStatus.createEmployee = false
+    })
+    builder.addCase(createEmployee.rejected, (state, action) => {
+      state.fetchStatus.createEmployee = false
+      state.error = action.payload
+    })
+  },
+})
